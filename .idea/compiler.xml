@@ -2,5 +2,9 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <addNotNullAssertions enabled="false" />
+    <bytecodeTargetLevel>
+      <module name="filmrary_main" target="1.8" />
+      <module name="filmrary_test" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
