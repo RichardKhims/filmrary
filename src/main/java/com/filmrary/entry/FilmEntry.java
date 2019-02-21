@@ -1,5 +1,7 @@
 package com.filmrary.entry;
 
+import com.filmrary.Util.DateUtilKt;
+
 import java.util.Date;
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class FilmEntry implements Entry {
     }
 
     public void setFilmedDate(Date filmedDate) {
+        DateUtilKt.checkDate(filmedDate, "filmedDate");
         this.filmedDate = filmedDate;
     }
 

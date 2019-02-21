@@ -1,5 +1,7 @@
 package com.filmrary.entry;
 
+import com.filmrary.Util.DateUtilKt;
+
 import java.util.Date;
 
 public class Person {
@@ -29,6 +31,7 @@ public class Person {
     }
 
     public void setBirthday(Date birthday) {
+        DateUtilKt.checkDate(birthday, "birthday");
         this.birthday = birthday;
     }
 
