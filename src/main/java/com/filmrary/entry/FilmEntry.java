@@ -20,11 +20,17 @@ public class FilmEntry implements Entry {
         ADVENTURE
     }
 
+    private int id;
     private Category category;
     private Date filmedDate;
     private ProducerEntry producer;
     private List<ActorEntry> actors;
     private String about;
+
+    @Override
+    public int getId() {
+        return id;
+    }
 
     public Category getCategory() {
         return category;
