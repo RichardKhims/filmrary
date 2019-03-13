@@ -77,7 +77,7 @@ public class ActorsFileStorage implements FileStorage<ActorEntry> {
         } catch (IncorrectFileException e) {
             throw e;
         } catch (Exception e) {
-            System.out.println("Read actors fialed");
+            System.out.println("Read actors failed");
             return null;
         }
     }
@@ -117,7 +117,7 @@ public class ActorsFileStorage implements FileStorage<ActorEntry> {
             }
             writer.close();
         } catch (Exception e) {
-            System.out.println("Save actors fialed");
+            System.out.println("Save actors failed");
         }
     }
 }
