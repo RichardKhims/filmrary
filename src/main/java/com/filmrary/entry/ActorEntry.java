@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ActorEntry extends Person implements Entry {
     private int id;
-    private List<String> playedFilmIds;
+    private List<Integer> playedFilmIds;
     private List<FilmEntry> playedFilms;
     private Builder builder = new Builder();
 
@@ -22,11 +22,11 @@ public class ActorEntry extends Person implements Entry {
         return builder;
     }
 
-    public List<String> getPlayedFilmIds() {
+    public List<Integer> getPlayedFilmIds() {
         return playedFilmIds;
     }
 
-    public void setPlayedFilmIds(List<String> playedFilmIds) {
+    public void setPlayedFilmIds(List<Integer> playedFilmIds) {
         this.playedFilmIds = playedFilmIds;
     }
 
@@ -44,7 +44,7 @@ public class ActorEntry extends Person implements Entry {
             return ActorEntry.this;
         }
 
-        public ActorEntry setPlayedFilmIds(List<String> playedFilmIds) {
+        public ActorEntry setPlayedFilmIds(List<Integer> playedFilmIds) {
             ActorEntry.this.setPlayedFilmIds(playedFilmIds);
             return ActorEntry.this;
         }

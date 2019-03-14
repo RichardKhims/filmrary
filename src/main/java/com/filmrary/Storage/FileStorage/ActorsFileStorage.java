@@ -6,11 +6,14 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.filmrary.exception.IncorrectFileException;
 import org.apache.commons.lang3.StringUtils;
@@ -26,9 +29,11 @@ public class ActorsFileStorage implements FileStorage<ActorEntry> {
     private static final String DATE_FORMAT = "dd.mm.yyyy";
     private static final String SPLITTER = ";";
 
+    private DateFormat df = new SimpleDateFormat(DATE_FORMAT);
+
     private String fileName;
 
-    ActorsFileStorage(String fileName) {
+    public ActorsFileStorage(String fileName) {
         setFileName(fileName);
     }
 
@@ -58,7 +63,7 @@ public class ActorsFileStorage implements FileStorage<ActorEntry> {
                 int id = Integer.valueOf(fields[FIELD_ID_INDEX]);
                 String name = fields[FIELD_NAME_INDEX];
                 String photoUrl = fields[FIELD_PHOTOURL_INDEX];
-                Date bithday = Date.from(Instant.parse(fields[FIELD_BIRTHDAY_INDEX]));
+                Date bithday = df.parse(fields[FIELD_BIRTHDAY_INDEX]);
                 String history = fields[FIELD_HISTORY_INDEX];
                 String films = fields[FIELD_FILMS_INDEX];
 
@@ -68,7 +73,9 @@ public class ActorsFileStorage implements FileStorage<ActorEntry> {
                         .getBuilder().setPhotoUrl(photoUrl)
                         .getBuilder().setBirthday(bithday)
                         .getBuilder().setHistory(history)
-                        .getBuilder().setPlayedFilmIds(Arrays.asList(films.split(",")));
+                        .getBuilder().setPlayedFilmIds(
+                                Arrays.stream(films.split(",")).map(Integer::parseInt).collect(Collectors.toList())
+                        );
 
                 result.add(actor);
             } while (StringUtils.isEmpty(line));
@@ -77,7 +84,7 @@ public class ActorsFileStorage implements FileStorage<ActorEntry> {
         } catch (IncorrectFileException e) {
             throw e;
         } catch (Exception e) {
-            System.out.println("Read actors failed");
+            System.out.println("Read actors failed: " + e);
             return null;
         }
     }
@@ -102,13 +109,13 @@ public class ActorsFileStorage implements FileStorage<ActorEntry> {
                             sb.append(entry.getPhotoUrl()).append(SPLITTER);
                             break;
                         case FIELD_BIRTHDAY_INDEX:
-                            sb.append(entry.getBirthday()).append(SPLITTER);
+                            sb.append(df.format(entry.getBirthday())).append(SPLITTER);
                             break;
                         case FIELD_HISTORY_INDEX:
                             sb.append(entry.getHistory()).append(SPLITTER);
                             break;
                         case FIELD_FILMS_INDEX:
-                            sb.append(String.join(",", entry.getPlayedFilmIds())).append(SPLITTER);
+                            sb.append(entry.getPlayedFilmIds().stream().map(String::valueOf).collect(Collectors.joining(","))).append(SPLITTER);
                             break;
                     }
                 }
@@ -117,7 +124,7 @@ public class ActorsFileStorage implements FileStorage<ActorEntry> {
             }
             writer.close();
         } catch (Exception e) {
-            System.out.println("Save actors failed");
+            System.out.println("Save actors failed: " + e);
         }
     }
 }
