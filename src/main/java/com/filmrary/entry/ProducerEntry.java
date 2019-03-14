@@ -6,6 +6,7 @@ import java.util.List;
 public class ProducerEntry extends Person implements Entry {
 
     private int id;
+    private List<Integer> producedFilmsIDs;
     private List<FilmEntry> producedFilms;
     private Builder builder = new Builder();
 
@@ -16,6 +17,14 @@ public class ProducerEntry extends Person implements Entry {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public List<Integer> getProducedFilmsIDs() {
+        return producedFilmsIDs;
+    }
+
+    public void setProducedFilmsIDs(List<Integer> producedFilmsIDs) {
+        this.producedFilmsIDs = producedFilmsIDs;
     }
 
     public List<FilmEntry> getProducedFilms() {
