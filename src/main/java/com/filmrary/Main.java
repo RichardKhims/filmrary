@@ -29,7 +29,8 @@ public class Main {
                 .getBuilder().setPlayedFilmIds(Arrays.asList(1,2,3));
 
 
-        ActorsFileStorage actorsFileStorage = new ActorsFileStorage("/Users/spider/actors.txt");
+        ActorsFileStorage actorsFileStorage = new ActorsFileStorage();
+        actorsFileStorage.setFileName("/Users/spider/actors.txt");
         try {
 //            actorsFileStorage.saveAll(Arrays.asList(actor));
             List<ActorEntry> actors = actorsFileStorage.readAll();

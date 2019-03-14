@@ -35,8 +35,7 @@ public class ProducerEntry extends Person implements Entry {
         this.producedFilms = producedFilms;
     }
 
-    @Override
-    public Person.Builder getBuilder() {
+    public Builder getBuilder() {
         return builder;
     }
 
@@ -67,6 +66,11 @@ public class ProducerEntry extends Person implements Entry {
 
         public ProducerEntry setProducedFilms(List<FilmEntry> producedFilms) {
             ProducerEntry.this.setProducedFilms(producedFilms);
+            return ProducerEntry.this;
+        }
+
+        public ProducerEntry setProducedFilmsIds(List<Integer> producedFilms) {
+            ProducerEntry.this.setProducedFilmsIDs(producedFilms);
             return ProducerEntry.this;
         }
 
