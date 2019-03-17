@@ -1,7 +1,9 @@
 package com.filmrary.Storage.FileStorage;
 
-import com.filmrary.Storage.ActorStorage;
-import com.filmrary.entry.ActorEntry;
+import com.filmrary.Storage.FilmStorage;
+import com.filmrary.entry.FilmEntry;
+import com.filmrary.exception.IncorrectFileException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,17 +17,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.filmrary.exception.IncorrectFileException;
-import org.apache.commons.lang3.StringUtils;
+public class FilmsFileStorage implements FilmStorage, FileStorage<FilmEntry> {
 
-public class ActorsFileStorage implements ActorStorage, FileStorage<ActorEntry> {
     private static final int FIELDS_COUNT = 6;
     private static final int FIELD_ID_INDEX = 0;
     private static final int FIELD_NAME_INDEX = 1;
-    private static final int FIELD_PHOTOURL_INDEX = 2;
-    private static final int FIELD_BIRTHDAY_INDEX = 3;
-    private static final int FIELD_HISTORY_INDEX = 4;
-    private static final int FIELD_FILMS_INDEX = 5;
+    private static final int FIELD_CATEGORY_INDEX = 2;
+    private static final int FIELD_DATE_INDEX = 3;
+    private static final int FIELD_PRODUCER_INDEX = 4;
+    private static final int FIELD_ACTORS_INDEX = 5;
+
     private static final String DATE_FORMAT = "dd.mm.yyyy";
     private static final String SPLITTER = ";";
 
@@ -43,9 +44,10 @@ public class ActorsFileStorage implements ActorStorage, FileStorage<ActorEntry> 
         return fileName;
     }
 
+
     @Override
-    public List<ActorEntry> readAll() throws IncorrectFileException {
-        List<ActorEntry> result = new ArrayList<>();
+    public List<FilmEntry> readAll() throws IncorrectFileException {
+        List<FilmEntry> result = new ArrayList<>();
         BufferedReader reader;
         try {
             reader = new BufferedReader(new FileReader(fileName));
@@ -58,19 +60,20 @@ public class ActorsFileStorage implements ActorStorage, FileStorage<ActorEntry> 
                 }
                 int id = Integer.valueOf(fields[FIELD_ID_INDEX]);
                 String name = fields[FIELD_NAME_INDEX];
-                String photoUrl = fields[FIELD_PHOTOURL_INDEX];
-                Date bithday = df.parse(fields[FIELD_BIRTHDAY_INDEX]);
-                String history = fields[FIELD_HISTORY_INDEX];
-                String films = fields[FIELD_FILMS_INDEX];
+                FilmEntry.Category category = FilmEntry.Category.valueOf(fields[FIELD_CATEGORY_INDEX]);
+                Date date = df.parse(fields[FIELD_DATE_INDEX]);
+                int producerId = Integer.valueOf(fields[FIELD_PRODUCER_INDEX]);
+                String actorsIds = fields[FIELD_ACTORS_INDEX];
 
-                ActorEntry actor = new ActorEntry()
+
+                FilmEntry actor = new FilmEntry()
                         .getBuilder().setId(id)
                         .getBuilder().setName(name)
-                        .getBuilder().setPhotoUrl(photoUrl)
-                        .getBuilder().setBirthday(bithday)
-                        .getBuilder().setHistory(history)
-                        .getBuilder().setPlayedFilmIds(
-                                Arrays.stream(films.split(",")).map(Integer::parseInt).collect(Collectors.toList())
+                        .getBuilder().setCategory(category)
+                        .getBuilder().setFilmedDate(date)
+                        .getBuilder().setProducerId(producerId)
+                        .getBuilder().setActorsIds(
+                                Arrays.stream(actorsIds.split(",")).map(Integer::parseInt).collect(Collectors.toList())
                         );
 
                 result.add(actor);
@@ -86,12 +89,12 @@ public class ActorsFileStorage implements ActorStorage, FileStorage<ActorEntry> 
     }
 
     @Override
-    public void saveAll(List<ActorEntry> entries) {
+    public void saveAll(List<FilmEntry> entries) {
         BufferedWriter writer;
         try {
             writer = new BufferedWriter(new FileWriter(fileName));
 
-            for (ActorEntry entry : entries) {
+            for (FilmEntry entry : entries) {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < FIELDS_COUNT; i++) {
                     switch (i) {
@@ -101,17 +104,17 @@ public class ActorsFileStorage implements ActorStorage, FileStorage<ActorEntry> 
                         case FIELD_NAME_INDEX:
                             sb.append(entry.getName()).append(SPLITTER);
                             break;
-                        case FIELD_PHOTOURL_INDEX:
-                            sb.append(entry.getPhotoUrl()).append(SPLITTER);
+                        case FIELD_CATEGORY_INDEX:
+                            sb.append(entry.getCategory()).append(SPLITTER);
                             break;
-                        case FIELD_BIRTHDAY_INDEX:
-                            sb.append(df.format(entry.getBirthday())).append(SPLITTER);
+                        case FIELD_DATE_INDEX:
+                            sb.append(df.format(entry.getFilmedDate())).append(SPLITTER);
                             break;
-                        case FIELD_HISTORY_INDEX:
-                            sb.append(entry.getHistory()).append(SPLITTER);
+                        case FIELD_PRODUCER_INDEX:
+                            sb.append(entry.getProducerId()).append(SPLITTER);
                             break;
-                        case FIELD_FILMS_INDEX:
-                            sb.append(entry.getPlayedFilmIds().stream().map(String::valueOf).collect(Collectors.joining(","))).append(SPLITTER);
+                        case FIELD_ACTORS_INDEX:
+                            sb.append(entry.getActorsIds().stream().map(String::valueOf).collect(Collectors.joining(","))).append(SPLITTER);
                             break;
                     }
                 }
@@ -125,12 +128,12 @@ public class ActorsFileStorage implements ActorStorage, FileStorage<ActorEntry> 
     }
 
     @Override
-    public ActorEntry getActorById(int id) {
+    public FilmEntry getFilmById(int id) {
         return null;
     }
 
     @Override
-    public List<ActorEntry> getActorsByFilmId(int filmId) {
+    public List<FilmEntry> getFilmsInCategory(FilmEntry.Category category) {
         return null;
     }
 }

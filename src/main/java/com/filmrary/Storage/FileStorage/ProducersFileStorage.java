@@ -1,5 +1,6 @@
 package com.filmrary.Storage.FileStorage;
 
+import com.filmrary.Storage.ProducerStorage;
 import com.filmrary.entry.ProducerEntry;
 import com.filmrary.exception.IncorrectFileException;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ProducersFileStorage implements FileStorage<ProducerEntry> {
+public class ProducersFileStorage implements ProducerStorage, FileStorage<ProducerEntry> {
     private String filename;
 
     private static final int FIELDS_COUNT = 6;
@@ -120,5 +121,15 @@ public class ProducersFileStorage implements FileStorage<ProducerEntry> {
         } catch (Exception e) {
             System.out.println("Save producers failed: " + e);
         }
+    }
+
+    @Override
+    public ProducerEntry getProducerById(int id) {
+        return null;
+    }
+
+    @Override
+    public ProducerEntry getProducerByFilmsId(int filmId) {
+        return null;
     }
 }
