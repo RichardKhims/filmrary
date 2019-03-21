@@ -10,11 +10,9 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FilmsFileStorage implements FilmStorage, FileStorage<FilmEntry> {
@@ -54,36 +52,15 @@ public class FilmsFileStorage implements FilmStorage, FileStorage<FilmEntry> {
             String line;
             do {
                 line = reader.readLine();
-                String[] fields = line.split(SPLITTER);
-                if (fields.length < FIELDS_COUNT) {
-                    throw new IncorrectFileException("Invalid file " + fileName);
-                }
-                int id = Integer.valueOf(fields[FIELD_ID_INDEX]);
-                String name = fields[FIELD_NAME_INDEX];
-                FilmEntry.Category category = FilmEntry.Category.valueOf(fields[FIELD_CATEGORY_INDEX]);
-                Date date = df.parse(fields[FIELD_DATE_INDEX]);
-                int producerId = Integer.valueOf(fields[FIELD_PRODUCER_INDEX]);
-                String actorsIds = fields[FIELD_ACTORS_INDEX];
-
-
-                FilmEntry actor = new FilmEntry()
-                        .getBuilder().setId(id)
-                        .getBuilder().setName(name)
-                        .getBuilder().setCategory(category)
-                        .getBuilder().setFilmedDate(date)
-                        .getBuilder().setProducerId(producerId)
-                        .getBuilder().setActorsIds(
-                                Arrays.stream(actorsIds.split(",")).map(Integer::parseInt).collect(Collectors.toList())
-                        );
-
-                result.add(actor);
+                FilmEntry film = parseLine(line);
+                result.add(film);
             } while (StringUtils.isEmpty(line));
             reader.close();
             return result;
         } catch (IncorrectFileException e) {
             throw e;
         } catch (Exception e) {
-            System.out.println("Read actors failed: " + e);
+            System.out.println("Read films failed: " + e);
             return null;
         }
     }
@@ -95,31 +72,7 @@ public class FilmsFileStorage implements FilmStorage, FileStorage<FilmEntry> {
             writer = new BufferedWriter(new FileWriter(fileName));
 
             for (FilmEntry entry : entries) {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < FIELDS_COUNT; i++) {
-                    switch (i) {
-                        case FIELD_ID_INDEX:
-                            sb.append(entry.getId()).append(SPLITTER);
-                            break;
-                        case FIELD_NAME_INDEX:
-                            sb.append(entry.getName()).append(SPLITTER);
-                            break;
-                        case FIELD_CATEGORY_INDEX:
-                            sb.append(entry.getCategory()).append(SPLITTER);
-                            break;
-                        case FIELD_DATE_INDEX:
-                            sb.append(df.format(entry.getFilmedDate())).append(SPLITTER);
-                            break;
-                        case FIELD_PRODUCER_INDEX:
-                            sb.append(entry.getProducerId()).append(SPLITTER);
-                            break;
-                        case FIELD_ACTORS_INDEX:
-                            sb.append(entry.getActorsIds().stream().map(String::valueOf).collect(Collectors.joining(","))).append(SPLITTER);
-                            break;
-                    }
-                }
-                sb.append('\n');
-                writer.write(sb.toString());
+                writer.write(makeLine(entry));
             }
             writer.close();
         } catch (Exception e) {
@@ -129,11 +82,75 @@ public class FilmsFileStorage implements FilmStorage, FileStorage<FilmEntry> {
 
     @Override
     public FilmEntry getFilmById(int id) {
+        try {
+            return readAll().stream().filter(entry -> entry.getId() == id).findFirst().orElse(null);
+        } catch (IncorrectFileException e) {
+            System.out.println("Failed to find film: " + e);
+        }
+
         return null;
     }
 
     @Override
     public List<FilmEntry> getFilmsInCategory(FilmEntry.Category category) {
+        try {
+            return readAll().stream().filter(entry -> entry.getCategory().equals(category)).collect(Collectors.toList());
+        } catch (IncorrectFileException e) {
+            System.out.println("Failed to find film: " + e);
+        }
+
         return null;
+    }
+
+    private FilmEntry parseLine(String line) throws IncorrectFileException, ParseException {
+        String[] fields = line.split(SPLITTER);
+        if (fields.length < FIELDS_COUNT) {
+            throw new IncorrectFileException("Invalid file " + fileName);
+        }
+        int id = Integer.valueOf(fields[FIELD_ID_INDEX]);
+        String name = fields[FIELD_NAME_INDEX];
+        FilmEntry.Category category = FilmEntry.Category.valueOf(fields[FIELD_CATEGORY_INDEX]);
+        Date date = df.parse(fields[FIELD_DATE_INDEX]);
+        int producerId = Integer.valueOf(fields[FIELD_PRODUCER_INDEX]);
+        String actorsIds = fields[FIELD_ACTORS_INDEX];
+
+
+        return new FilmEntry()
+                .getBuilder().setId(id)
+                .getBuilder().setName(name)
+                .getBuilder().setCategory(category)
+                .getBuilder().setFilmedDate(date)
+                .getBuilder().setProducerId(producerId)
+                .getBuilder().setActorsIds(
+                        Arrays.stream(actorsIds.split(",")).map(Integer::parseInt).collect(Collectors.toList())
+                );
+    }
+
+    private String makeLine(FilmEntry entry) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < FIELDS_COUNT; i++) {
+            switch (i) {
+                case FIELD_ID_INDEX:
+                    sb.append(entry.getId()).append(SPLITTER);
+                    break;
+                case FIELD_NAME_INDEX:
+                    sb.append(entry.getName()).append(SPLITTER);
+                    break;
+                case FIELD_CATEGORY_INDEX:
+                    sb.append(entry.getCategory()).append(SPLITTER);
+                    break;
+                case FIELD_DATE_INDEX:
+                    sb.append(df.format(entry.getFilmedDate())).append(SPLITTER);
+                    break;
+                case FIELD_PRODUCER_INDEX:
+                    sb.append(entry.getProducerId()).append(SPLITTER);
+                    break;
+                case FIELD_ACTORS_INDEX:
+                    sb.append(entry.getActorsIds().stream().map(String::valueOf).collect(Collectors.joining(","))).append(SPLITTER);
+                    break;
+            }
+        }
+        sb.append('\n');
+        return sb.toString();
     }
 }
