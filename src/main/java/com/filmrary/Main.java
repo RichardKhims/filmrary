@@ -34,9 +34,10 @@ public class Main {
         try {
 //            actorsFileStorage.saveAll(Arrays.asList(actor));
             List<ActorEntry> actors = actorsFileStorage.readAll();
-            for (ActorEntry entry : actors) {
-                System.out.println(entry);
-            }
+//            for (ActorEntry entry : actors) {
+//                System.out.println(entry);
+//            }
+            System.out.println(actorsFileStorage.getActorById(1));
         } catch (Exception e) {
 
         }

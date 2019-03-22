@@ -8,6 +8,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,27 +53,7 @@ public class ActorsFileStorage implements ActorStorage, FileStorage<ActorEntry> 
             String line;
             do {
                 line = reader.readLine();
-                String[] fields = line.split(SPLITTER);
-                if (fields.length < FIELDS_COUNT) {
-                    throw new IncorrectFileException("Invalid file " + fileName);
-                }
-                int id = Integer.valueOf(fields[FIELD_ID_INDEX]);
-                String name = fields[FIELD_NAME_INDEX];
-                String photoUrl = fields[FIELD_PHOTOURL_INDEX];
-                Date bithday = df.parse(fields[FIELD_BIRTHDAY_INDEX]);
-                String history = fields[FIELD_HISTORY_INDEX];
-                String films = fields[FIELD_FILMS_INDEX];
-
-                ActorEntry actor = new ActorEntry()
-                        .getBuilder().setId(id)
-                        .getBuilder().setName(name)
-                        .getBuilder().setPhotoUrl(photoUrl)
-                        .getBuilder().setBirthday(bithday)
-                        .getBuilder().setHistory(history)
-                        .getBuilder().setPlayedFilmIds(
-                                Arrays.stream(films.split(",")).map(Integer::parseInt).collect(Collectors.toList())
-                        );
-
+                ActorEntry actor = parseLine(line);
                 result.add(actor);
             } while (StringUtils.isEmpty(line));
             reader.close();
@@ -92,31 +73,7 @@ public class ActorsFileStorage implements ActorStorage, FileStorage<ActorEntry> 
             writer = new BufferedWriter(new FileWriter(fileName));
 
             for (ActorEntry entry : entries) {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < FIELDS_COUNT; i++) {
-                    switch (i) {
-                        case FIELD_ID_INDEX:
-                            sb.append(entry.getId()).append(SPLITTER);
-                            break;
-                        case FIELD_NAME_INDEX:
-                            sb.append(entry.getName()).append(SPLITTER);
-                            break;
-                        case FIELD_PHOTOURL_INDEX:
-                            sb.append(entry.getPhotoUrl()).append(SPLITTER);
-                            break;
-                        case FIELD_BIRTHDAY_INDEX:
-                            sb.append(df.format(entry.getBirthday())).append(SPLITTER);
-                            break;
-                        case FIELD_HISTORY_INDEX:
-                            sb.append(entry.getHistory()).append(SPLITTER);
-                            break;
-                        case FIELD_FILMS_INDEX:
-                            sb.append(entry.getPlayedFilmIds().stream().map(String::valueOf).collect(Collectors.joining(","))).append(SPLITTER);
-                            break;
-                    }
-                }
-                sb.append('\n');
-                writer.write(sb.toString());
+                writer.write(makeLine(entry));
             }
             writer.close();
         } catch (Exception e) {
@@ -126,11 +83,75 @@ public class ActorsFileStorage implements ActorStorage, FileStorage<ActorEntry> 
 
     @Override
     public ActorEntry getActorById(int id) {
+        try {
+            return readAll().stream().filter(entry -> entry.getId() == id).findFirst().orElse(null);
+        } catch (IncorrectFileException e) {
+            System.out.println("Failed to find actor: " + e);
+        }
+
         return null;
     }
 
     @Override
     public List<ActorEntry> getActorsByFilmId(int filmId) {
+        try {
+            return readAll().stream().filter(entry -> entry.getPlayedFilmIds().contains(filmId)).collect(Collectors.toList());
+        } catch (IncorrectFileException e) {
+            System.out.println("Failed to find film: " + e);
+        }
+
         return null;
+    }
+
+    private ActorEntry parseLine(String line) throws IncorrectFileException, ParseException {
+        String[] fields = line.split(SPLITTER);
+        if (fields.length < FIELDS_COUNT) {
+            throw new IncorrectFileException("Invalid file " + fileName);
+        }
+        int id = Integer.valueOf(fields[FIELD_ID_INDEX]);
+        String name = fields[FIELD_NAME_INDEX];
+        String photoUrl = fields[FIELD_PHOTOURL_INDEX];
+        Date bithday = df.parse(fields[FIELD_BIRTHDAY_INDEX]);
+        String history = fields[FIELD_HISTORY_INDEX];
+        String films = fields[FIELD_FILMS_INDEX];
+
+        return new ActorEntry()
+                .getBuilder().setId(id)
+                .getBuilder().setName(name)
+                .getBuilder().setPhotoUrl(photoUrl)
+                .getBuilder().setBirthday(bithday)
+                .getBuilder().setHistory(history)
+                .getBuilder().setPlayedFilmIds(
+                        Arrays.stream(films.split(",")).map(Integer::parseInt).collect(Collectors.toList())
+                );
+    }
+
+    private String makeLine(ActorEntry entry) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < FIELDS_COUNT; i++) {
+            switch (i) {
+                case FIELD_ID_INDEX:
+                    sb.append(entry.getId()).append(SPLITTER);
+                    break;
+                case FIELD_NAME_INDEX:
+                    sb.append(entry.getName()).append(SPLITTER);
+                    break;
+                case FIELD_PHOTOURL_INDEX:
+                    sb.append(entry.getPhotoUrl()).append(SPLITTER);
+                    break;
+                case FIELD_BIRTHDAY_INDEX:
+                    sb.append(df.format(entry.getBirthday())).append(SPLITTER);
+                    break;
+                case FIELD_HISTORY_INDEX:
+                    sb.append(entry.getHistory()).append(SPLITTER);
+                    break;
+                case FIELD_FILMS_INDEX:
+                    sb.append(entry.getPlayedFilmIds().stream().map(String::valueOf).collect(Collectors.joining(","))).append(SPLITTER);
+                    break;
+            }
+        }
+        sb.append('\n');
+
+        return sb.toString();
     }
 }
