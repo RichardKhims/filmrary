@@ -1,5 +1,6 @@
 package com.filmrary;
 
+import com.filmrary.Manager.FilmraryManager;
 import com.filmrary.Storage.FileStorage.ActorsFileStorage;
 import com.filmrary.entry.ActorEntry;
 import com.filmrary.entry.ProducerEntry;
@@ -29,15 +30,16 @@ public class Main {
                 .getBuilder().setPlayedFilmIds(Arrays.asList(1,2,3));
 
 
-        ActorsFileStorage actorsFileStorage = new ActorsFileStorage();
-        actorsFileStorage.setFileName("/Users/spider/actors.txt");
+//        ActorsFileStorage actorsFileStorage = new ActorsFileStorage();
+//        actorsFileStorage.setFileName("/Users/spider/actors.txt");
         try {
+            FilmraryManager manager = new FilmraryManager();
 //            actorsFileStorage.saveAll(Arrays.asList(actor));
-            List<ActorEntry> actors = actorsFileStorage.readAll();
-//            for (ActorEntry entry : actors) {
-//                System.out.println(entry);
-//            }
-            System.out.println(actorsFileStorage.getActorById(1));
+            List<ActorEntry> actors = manager.getActors();
+            for (ActorEntry entry : actors) {
+                System.out.println(entry);
+            }
+//            System.out.println(actorsFileStorage.getActorById(1));
         } catch (Exception e) {
 
         }
