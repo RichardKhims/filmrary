@@ -4,7 +4,8 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <context:annotation-config />
+    <!--<context:annotation-config />-->
+    <context:component-scan base-package="com.filmrary.Manager"/>
 
     <bean id="actorsStorage" class="com.filmrary.Storage.FileStorage.ActorsFileStorage">
         <property name="fileName" value="/Users/spider/actors.txt" />
@@ -18,4 +19,5 @@
         <property name="fileName" value="/Users/spider/actors.txt" />
     </bean>
 
+    <bean id="filmraryManager" class="com.filmrary.Manager.FilmraryManager"/>
 </beans>
