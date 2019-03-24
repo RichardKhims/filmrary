@@ -4,7 +4,6 @@ import com.filmrary.Manager.FilmraryManager;
 import com.filmrary.Storage.FileStorage.ActorsFileStorage;
 import com.filmrary.entry.ActorEntry;
 import com.filmrary.entry.ProducerEntry;
-import javafx.application.Application;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -17,7 +16,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
 
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(Main.class, args);
 //        ActorEntry actor = new ActorEntry()
 //                .getBuilder().setId(1)
 //                .getBuilder().setName("Сильвестр Сталло́не")
