@@ -1,5 +1,7 @@
 package com.filmrary.entry;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.filmrary.Util.DateUtilKt;
 
 import java.util.Date;
@@ -53,8 +55,10 @@ abstract public class Person {
                 '}';
     }
 
+    @JsonIgnore
     abstract public Builder getBuilder();
 
+    @JsonIgnoreProperties
     public interface Builder<T extends Person> {
         T setName(String name);
         T setPhotoUrl(String photoUrl);

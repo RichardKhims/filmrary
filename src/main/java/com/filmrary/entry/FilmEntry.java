@@ -1,5 +1,7 @@
 package com.filmrary.entry;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.filmrary.Util.DateUtilKt;
 
 import java.util.Date;
@@ -30,6 +32,7 @@ public class FilmEntry implements Entry {
     private List<ActorEntry> actors;
     private String about;
 
+    @JsonIgnore
     private Builder builder = new Builder();
 
     @Override
@@ -110,6 +113,7 @@ public class FilmEntry implements Entry {
         return builder;
     }
 
+    @JsonIgnoreProperties
     public class Builder {
         public FilmEntry setId(int id) {
             FilmEntry.this.setId(id);

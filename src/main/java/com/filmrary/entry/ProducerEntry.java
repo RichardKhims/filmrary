@@ -1,5 +1,8 @@
 package com.filmrary.entry;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +11,8 @@ public class ProducerEntry extends Person implements Entry {
     private int id;
     private List<Integer> producedFilmsIDs;
     private List<FilmEntry> producedFilms;
+
+    @JsonIgnore
     private Builder builder = new Builder();
 
     @Override
@@ -39,6 +44,7 @@ public class ProducerEntry extends Person implements Entry {
         return builder;
     }
 
+    @JsonIgnoreProperties
     public class Builder implements Person.Builder<ProducerEntry> {
         @Override
         public ProducerEntry setName(String name) {
