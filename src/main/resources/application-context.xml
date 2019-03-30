@@ -19,6 +19,4 @@
     <bean id="producersStorage" class="com.filmrary.Storage.FileStorage.ProducersFileStorage">
         <property name="fileName" value="E:\Work\IdeaProjects\filmrary\src\main\resources\producers.txt" />
     </bean>
-
-    <bean id="manager" class="com.filmrary.Manager.FilmraryManager"/>
 </beans>

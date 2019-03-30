@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.filmrary.exception.EntryNotFoundException;
 import com.filmrary.exception.IncorrectFileException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -82,25 +83,23 @@ public class ActorsFileStorage implements ActorStorage, FileStorage<ActorEntry> 
     }
 
     @Override
-    public ActorEntry getActorById(int id) {
+    public ActorEntry getActorById(int id) throws EntryNotFoundException {
         try {
             return readAll().stream().filter(entry -> entry.getId() == id).findFirst().orElse(null);
         } catch (IncorrectFileException e) {
             System.out.println("Failed to find actor: " + e);
+            throw new EntryNotFoundException("Actor with id:" + Integer.toString(id) + " not found");
         }
-
-        return null;
     }
 
     @Override
-    public List<ActorEntry> getActorsByFilmId(int filmId) {
+    public List<ActorEntry> getActorsByFilmId(int filmId) throws EntryNotFoundException {
         try {
             return readAll().stream().filter(entry -> entry.getPlayedFilmIds().contains(filmId)).collect(Collectors.toList());
         } catch (IncorrectFileException e) {
             System.out.println("Failed to find film: " + e);
+            throw new EntryNotFoundException("Actor with film id:" + Integer.toString(filmId) + " not found");
         }
-
-        return null;
     }
 
     private ActorEntry parseLine(String line) throws IncorrectFileException, ParseException {

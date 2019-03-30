@@ -2,6 +2,7 @@ package com.filmrary.Storage.FileStorage;
 
 import com.filmrary.Storage.FilmStorage;
 import com.filmrary.entry.FilmEntry;
+import com.filmrary.exception.EntryNotFoundException;
 import com.filmrary.exception.IncorrectFileException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -82,25 +83,23 @@ public class FilmsFileStorage implements FilmStorage, FileStorage<FilmEntry> {
     }
 
     @Override
-    public FilmEntry getFilmById(int id) {
+    public FilmEntry getFilmById(int id) throws EntryNotFoundException {
         try {
             return readAll().stream().filter(entry -> entry.getId() == id).findFirst().orElse(null);
         } catch (IncorrectFileException e) {
             System.out.println("Failed to find film: " + e);
+            throw new EntryNotFoundException("Film with id:" + Integer.toString(id) + " not found");
         }
-
-        return null;
     }
 
     @Override
-    public List<FilmEntry> getFilmsInCategory(FilmEntry.Category category) {
+    public List<FilmEntry> getFilmsInCategory(FilmEntry.Category category) throws EntryNotFoundException {
         try {
             return readAll().stream().filter(entry -> entry.getCategory().equals(category)).collect(Collectors.toList());
         } catch (IncorrectFileException e) {
             System.out.println("Failed to find film: " + e);
+            throw new EntryNotFoundException("Film with category:" + category + " not found");
         }
-
-        return null;
     }
 
     private FilmEntry parseLine(String line) throws IncorrectFileException, ParseException {

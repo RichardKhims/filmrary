@@ -2,6 +2,7 @@ package com.filmrary.Storage.FileStorage;
 
 import com.filmrary.Storage.ProducerStorage;
 import com.filmrary.entry.ProducerEntry;
+import com.filmrary.exception.EntryNotFoundException;
 import com.filmrary.exception.IncorrectFileException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -81,25 +82,23 @@ public class ProducersFileStorage implements ProducerStorage, FileStorage<Produc
     }
 
     @Override
-    public ProducerEntry getProducerById(int id) {
+    public ProducerEntry getProducerById(int id) throws EntryNotFoundException {
         try {
             return readAll().stream().filter(entry -> entry.getId() == id).findFirst().orElse(null);
         } catch (IncorrectFileException e) {
             System.out.println("Failed to find producer: " + e);
+            throw new EntryNotFoundException("Producer with id:" + Integer.toString(id) + " not found");
         }
-
-        return null;
     }
 
     @Override
-    public ProducerEntry getProducerByFilmId(int filmId) {
+    public ProducerEntry getProducerByFilmId(int filmId) throws EntryNotFoundException {
         try {
             return readAll().stream().filter(entry -> entry.getProducedFilmsIDs().contains(filmId)).findFirst().orElse(null);
         } catch (IncorrectFileException e) {
             System.out.println("Failed to find producer: " + e);
+            throw new EntryNotFoundException("Film with film id:" + Integer.toString(filmId) + " not found");
         }
-
-        return null;
     }
 
     private ProducerEntry parseLine(String line) throws IncorrectFileException, ParseException {
