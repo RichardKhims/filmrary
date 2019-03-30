@@ -111,19 +111,12 @@ public class ActorsFileStorage implements ActorStorage, FileStorage<ActorEntry> 
         int id = Integer.valueOf(fields[FIELD_ID_INDEX]);
         String name = fields[FIELD_NAME_INDEX];
         String photoUrl = fields[FIELD_PHOTOURL_INDEX];
-        Date bithday = df.parse(fields[FIELD_BIRTHDAY_INDEX]);
+        Date birthday = df.parse(fields[FIELD_BIRTHDAY_INDEX]);
         String history = fields[FIELD_HISTORY_INDEX];
         String films = fields[FIELD_FILMS_INDEX];
+        List<Integer> filmsIds = Arrays.stream(films.split(",")).map(Integer::parseInt).collect(Collectors.toList());
 
-        return new ActorEntry()
-                .getBuilder().setId(id)
-                .getBuilder().setName(name)
-                .getBuilder().setPhotoUrl(photoUrl)
-                .getBuilder().setBirthday(bithday)
-                .getBuilder().setHistory(history)
-                .getBuilder().setPlayedFilmIds(
-                        Arrays.stream(films.split(",")).map(Integer::parseInt).collect(Collectors.toList())
-                );
+        return new ActorEntry(id, name, photoUrl, birthday, history, filmsIds);
     }
 
     private String makeLine(ActorEntry entry) {

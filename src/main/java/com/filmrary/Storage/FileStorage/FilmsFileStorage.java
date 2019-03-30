@@ -17,13 +17,14 @@ import java.util.stream.Collectors;
 
 public class FilmsFileStorage implements FilmStorage, FileStorage<FilmEntry> {
 
-    private static final int FIELDS_COUNT = 6;
+    private static final int FIELDS_COUNT = 7;
     private static final int FIELD_ID_INDEX = 0;
     private static final int FIELD_NAME_INDEX = 1;
     private static final int FIELD_CATEGORY_INDEX = 2;
     private static final int FIELD_DATE_INDEX = 3;
     private static final int FIELD_PRODUCER_INDEX = 4;
     private static final int FIELD_ACTORS_INDEX = 5;
+    private static final int FIELD_ABOUT_INDEX = 6;
 
     private static final String DATE_FORMAT = "dd.mm.yyyy";
     private static final String SPLITTER = ";";
@@ -112,18 +113,11 @@ public class FilmsFileStorage implements FilmStorage, FileStorage<FilmEntry> {
         FilmEntry.Category category = FilmEntry.Category.valueOf(fields[FIELD_CATEGORY_INDEX]);
         Date date = df.parse(fields[FIELD_DATE_INDEX]);
         int producerId = Integer.valueOf(fields[FIELD_PRODUCER_INDEX]);
-        String actorsIds = fields[FIELD_ACTORS_INDEX];
+        String actorsIdsLine = fields[FIELD_ACTORS_INDEX];
+        List<Integer> actorsIds = Arrays.stream(actorsIdsLine.split(",")).map(Integer::parseInt).collect(Collectors.toList());
+        String about = fields[FIELD_ABOUT_INDEX];
 
-
-        return new FilmEntry()
-                .getBuilder().setId(id)
-                .getBuilder().setName(name)
-                .getBuilder().setCategory(category)
-                .getBuilder().setFilmedDate(date)
-                .getBuilder().setProducerId(producerId)
-                .getBuilder().setActorsIds(
-                        Arrays.stream(actorsIds.split(",")).map(Integer::parseInt).collect(Collectors.toList())
-                );
+        return new FilmEntry(id, name, category, date, producerId, actorsIds, about);
     }
 
     private String makeLine(FilmEntry entry) {
@@ -148,9 +142,13 @@ public class FilmsFileStorage implements FilmStorage, FileStorage<FilmEntry> {
                 case FIELD_ACTORS_INDEX:
                     sb.append(entry.getActorsIds().stream().map(String::valueOf).collect(Collectors.joining(","))).append(SPLITTER);
                     break;
+                case FIELD_ABOUT_INDEX:
+                    sb.append(entry.getAbout()).append(SPLITTER);
+                    break;
             }
         }
         sb.append('\n');
+
         return sb.toString();
     }
 }

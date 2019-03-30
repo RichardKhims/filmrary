@@ -1,8 +1,5 @@
 package com.filmrary.entry;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.util.Date;
 import java.util.List;
 
@@ -11,8 +8,15 @@ public class ActorEntry extends Person implements Entry {
     private List<Integer> playedFilmIds;
     private List<FilmEntry> playedFilms;
 
-    @JsonIgnore
-    private Builder builder = new Builder();
+    public ActorEntry() {
+
+    }
+
+    public ActorEntry(int id, String name, String photoUrl, Date birthday, String history, List<Integer> playedFilmIds) {
+        super(name, photoUrl, birthday, history);
+        this.id = id;
+        this.playedFilmIds = playedFilmIds;
+    }
 
     @Override
     public int getId() {
@@ -21,10 +25,6 @@ public class ActorEntry extends Person implements Entry {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public Builder getBuilder() {
-        return builder;
     }
 
     public List<Integer> getPlayedFilmIds() {
@@ -41,47 +41,5 @@ public class ActorEntry extends Person implements Entry {
 
     public void setPlayedFilms(List<FilmEntry> playedFilms) {
         this.playedFilms = playedFilms;
-    }
-
-    @JsonIgnoreProperties
-    public class Builder implements Person.Builder<ActorEntry> {
-        public ActorEntry setId(int id) {
-            ActorEntry.this.setId(id);
-            return ActorEntry.this;
-        }
-
-        public ActorEntry setPlayedFilmIds(List<Integer> playedFilmIds) {
-            ActorEntry.this.setPlayedFilmIds(playedFilmIds);
-            return ActorEntry.this;
-        }
-
-        public ActorEntry setPlayedFilms(List<FilmEntry> playedFilms) {
-            ActorEntry.this.setPlayedFilms(playedFilms);
-            return ActorEntry.this;
-        }
-
-        @Override
-        public ActorEntry setBirthday(Date birthday) {
-            ActorEntry.this.setBirthday(birthday);
-            return ActorEntry.this;
-        }
-
-        @Override
-        public ActorEntry setHistory(String history) {
-            ActorEntry.this.setHistory(history);
-            return ActorEntry.this;
-        }
-
-        @Override
-        public ActorEntry setName(String name) {
-            ActorEntry.this.setName(name);
-            return ActorEntry.this;
-        }
-
-        @Override
-        public ActorEntry setPhotoUrl(String photoUrl) {
-            ActorEntry.this.setPhotoUrl(photoUrl);
-            return ActorEntry.this;
-        }
     }
 }

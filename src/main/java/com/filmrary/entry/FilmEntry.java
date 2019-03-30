@@ -1,7 +1,5 @@
 package com.filmrary.entry;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.filmrary.Util.DateUtilKt;
 
 import java.util.Date;
@@ -32,8 +30,19 @@ public class FilmEntry implements Entry {
     private List<ActorEntry> actors;
     private String about;
 
-    @JsonIgnore
-    private Builder builder = new Builder();
+    public FilmEntry() {
+
+    }
+
+    public FilmEntry(int id, String name, Category category, Date filmedDate, int producerId, List<Integer> actorsIds, String about) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.filmedDate = filmedDate;
+        this.producerId = producerId;
+        this.actorsIds = actorsIds;
+        this.about = about;
+    }
 
     @Override
     public int getId() {
@@ -107,42 +116,5 @@ public class FilmEntry implements Entry {
 
     public void setActorsIds(List<Integer> actorsIds) {
         this.actorsIds = actorsIds;
-    }
-
-    public Builder getBuilder() {
-        return builder;
-    }
-
-    @JsonIgnoreProperties
-    public class Builder {
-        public FilmEntry setId(int id) {
-            FilmEntry.this.setId(id);
-            return FilmEntry.this;
-        }
-
-        public FilmEntry setName(String name) {
-            FilmEntry.this.setName(name);
-            return FilmEntry.this;
-        }
-
-        public FilmEntry setCategory(Category category) {
-            FilmEntry.this.setCategory(category);
-            return FilmEntry.this;
-        }
-
-        public FilmEntry setFilmedDate(Date date) {
-            FilmEntry.this.setFilmedDate(date);
-            return FilmEntry.this;
-        }
-
-        public FilmEntry setProducerId(int id) {
-            FilmEntry.this.setProducerId(id);
-            return FilmEntry.this;
-        }
-
-        public FilmEntry setActorsIds(List<Integer> actorsIds) {
-            FilmEntry.this.setActorsIds(actorsIds);
-            return FilmEntry.this;
-        }
     }
 }
